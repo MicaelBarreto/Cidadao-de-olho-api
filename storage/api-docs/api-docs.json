@@ -1,0 +1,152 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Cidadão de Olho - API",
+        "description": "Documentação via swagger da API da aplicação Cidadão de Olho!",
+        "contact": {
+            "email": "micaelmoraes.dev@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/deputados": {
+            "get": {
+                "summary": "Lista todos os deputados",
+                "operationId": "App\\Http\\Controllers\\DeputadoController::index",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso"
+                    },
+                    "500": {
+                        "description": "Erro Interno"
+                    },
+                    "400": {
+                        "description": "Não Encontrado"
+                    },
+                    "405": {
+                        "description": "Método não Permitido"
+                    },
+                    "408": {
+                        "description": "Time Out"
+                    }
+                }
+            }
+        },
+        "/deputados/{id}": {
+            "get": {
+                "summary": "Retorna os dados de um deputado específico",
+                "operationId": "App\\Http\\Controllers\\DeputadoController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do deputado",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucesso"
+                    },
+                    "500": {
+                        "description": "Erro Interno"
+                    },
+                    "400": {
+                        "description": "Não Encontrado"
+                    },
+                    "405": {
+                        "description": "Método não Permitido"
+                    },
+                    "408": {
+                        "description": "Time Out"
+                    }
+                }
+            }
+        },
+        "/rankings": {
+            "get": {
+                "summary": "Retorna os rankings dos top 5",
+                "operationId": "App\\Http\\Controllers\\RankingController::index",
+                "responses": {
+                    "200": {
+                        "description": "Sucesso"
+                    },
+                    "500": {
+                        "description": "Erro Interno"
+                    },
+                    "400": {
+                        "description": "Não Encontrado"
+                    },
+                    "405": {
+                        "description": "Método não Permitido"
+                    },
+                    "408": {
+                        "description": "Time Out"
+                    }
+                }
+            }
+        },
+        "/rankings/{id}": {
+            "get": {
+                "summary": "Retorna o ranking de deputados que mais pediram indenizações em determinado mês",
+                "operationId": "App\\Http\\Controllers\\RankingController::dataChange",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Numero do mês",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucesso"
+                    },
+                    "500": {
+                        "description": "Erro Interno"
+                    },
+                    "400": {
+                        "description": "Não Encontrado"
+                    },
+                    "405": {
+                        "description": "Método não Permitido"
+                    },
+                    "408": {
+                        "description": "Time Out"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Deputado": {
+                "title": "Deputado model",
+                "description": "Model da tabela deputados",
+                "required": [
+                    "id",
+                    "nome",
+                    "partido"
+                ]
+            },
+            "Indenizacao": {
+                "title": "Indenizacao model",
+                "description": "Model da tabela indenizacaos",
+                "required": [
+                    "id",
+                    "data",
+                    "deputado_id"
+                ]
+            },
+            "Midia": {
+                "title": "Midia model",
+                "description": "Model da tabela midias",
+                "required": [
+                    "id",
+                    "nome",
+                    "url"
+                ]
+            }
+        }
+    }
+}
