@@ -92,4 +92,7 @@ A API utiliza o framework swagger para gerar documentação, para acessa-la siga
 ```
 php artisan l5-swagger:generate
 ```
-- Abrir navegador em [http://localhost:8001/api/documentation](http://localhost:8001/api/documentation).
+- Abrir navegador em [http://localhost:8001/api/documentation](http://localhost:8001/api/documentation)
+
+## Erros
+Ao utilizar o comando **php artisan popular:tabelas** podem ocorrer alguns erros por conta de um bloqueio que o servidor do web service faz devido a grande quantidade de requisições em um curto período de tempo. Como tentativa de amenizar o problema foi adiciona a função **sleep()** no código, mas o erro pode ocorrer e neste caso espere entre ~1-2 minutos para executar novamente.

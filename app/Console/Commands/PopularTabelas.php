@@ -34,15 +34,33 @@ class PopularTabelas extends Command
      */
     public function handle()
     {
+        $time = 5;
         // Deputados em exercicio
         $ch = curl_init('http://dadosabertos.almg.gov.br/ws/deputados/em_exercicio?formato=json');
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $json_deputados = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , false);
+        // curl_setopt($ch, CURLOPT_HEADER, 1);
+        $json_deputados = curl_exec($ch);        
         curl_close($ch);
 
         $deputados = json_decode($json_deputados, true);
+
+        if(!$deputados){
+            $time++;
+            sleep($time);
+
+            $ch = curl_init('http://dadosabertos.almg.gov.br/ws/deputados/em_exercicio?formato=json');
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , false);
+            $json_deputados = curl_exec($ch);
+            curl_close($ch);
+
+            $deputados = json_decode($json_deputados, true);
+        }
 
         DB::beginTransaction();
         try{
@@ -54,16 +72,32 @@ class PopularTabelas extends Command
 
                 $deputado->save();
 
-                $this->info('deputado.id: '.$deputado->id);
-
                 // Indenizações por deputado
                 $ch = curl_init('http://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/'.$deputado->id.'/datas?formato=json');
-                curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $json_indenizacao = curl_exec($ch);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , false);
+                // curl_setopt($ch, CURLOPT_HEADER, 1);
+                $json_indenizacao = curl_exec($ch);                
                 curl_close($ch);
+
                 $indenizacoes = json_decode($json_indenizacao, true);
+
+                if(!$indenizacoes){
+                    $time++;
+                    sleep($time);
+
+                    $ch = curl_init('http://dadosabertos.almg.gov.br/ws/prestacao_contas/verbas_indenizatorias/legislatura_atual/deputados/'.$deputado->id.'/datas?formato=json');
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , false);
+                    $json_indenizacao = curl_exec($ch);
+                    curl_close($ch);
+
+                    $indenizacoes = json_decode($json_indenizacao, true);
+                }
 
                 foreach($indenizacoes['list'] as $i){
                     $indenizacao = new Indenizacao;
@@ -75,15 +109,33 @@ class PopularTabelas extends Command
 
                 // Redes sociais dos deputado
                 $ch = curl_init('http://dadosabertos.almg.gov.br/ws/deputados/'.$deputado->id.'?formato=json');
-                curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $json_deputado = curl_exec($ch);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , false);
+                // curl_setopt($ch, CURLOPT_HEADER, 1);
+                $json_deputado = curl_exec($ch);                
                 curl_close($ch);
+
                 $dep = json_decode($json_deputado, true);
 
+                if(!$dep){
+                    $time++;
+                    sleep($time);
+
+                    $ch = curl_init('http://dadosabertos.almg.gov.br/ws/deputados/'.$deputado->id.'?formato=json');
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , false);
+                    $json_deputado = curl_exec($ch);
+                    curl_close($ch);
+                    
+                    $dep = json_decode($json_deputado, true);
+                }
+
                 foreach ($dep['deputado']['redesSociais'] as $rede) {
-                    $midia = Midia::where('nome', 'LIKE', $rede['redeSocial']['nome'])->first();
+                    $midia = Midia::find($rede['redeSocial']['id']);
 
                     if(!$midia){
                         $midia = new Midia;
